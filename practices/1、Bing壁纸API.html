@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bing壁纸自动轮播</title>
+</head>
+
+<body>
+    <script>
+        const imageCount = 7;
+        const getImageApi = "http://47.103.144.215:2020/bing?idx=0&n=" + imageCount;
+        const bingUrl = "https://cn.bing.com";
+
+        window.onload = function () {
+            var baseUnit = 1000;    // 毫秒（ms）
+            var runInterval = baseUnit * 60 * 1;   // 11分钟
+
+            setImage();             // 立即执行
+            setInterval(setImage, runInterval);         // 每隔一个周期执行一次
+        };
+
+
+
+        function setImage() {
+            var ajax = new XMLHttpRequest();
+            ajax.open("get", getImageApi, true);
+            ajax.send();
+            ajax.onreadystatechange = function () {
+                if (ajax.readyState == 4 && ajax.status == 200) {
+                    var imageList = JSON.parse(ajax.responseText);
+                    var idx = Math.floor((Math.random() * imageList.images.length));
+                    var imageUrl = bingUrl + imageList.images[idx].url;
+
+                    window.document.body.style.width = "100%";
+                    window.document.body.style.height = "100%";
+                    window.document.body.style.backgroundImage = "url(" + imageUrl + ")";
+
+                    localStorage.setItem("imageList", JSON.stringify(imageList));
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>
